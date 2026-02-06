@@ -3,7 +3,12 @@ import os
 class Config:
     # Database
     # Format: postgresql://user:password@host:port/dbname
-    SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL", "sqlite:///" + os.path.join(os.getcwd(), "atp_dev.db"))
+    raw_uri = os.getenv("DATABASE_URL")
+    if raw_uri and raw_uri.startswith("postgres://"):
+        raw_uri = raw_uri.replace("postgres://", "postgresql://", 1)
+    
+    SQLALCHEMY_DATABASE_URI = raw_uri or ("sqlite:///" + os.path.join(os.getcwd(), "atp_dev.db"))
+
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
