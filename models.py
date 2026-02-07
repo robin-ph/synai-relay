@@ -25,6 +25,8 @@ class Agent(db.Model):
     adoption_tweet_url = db.Column(db.Text)
     adoption_hash = db.Column(db.String(64))
     balance = db.Column(db.Numeric(20, 6), default=0)
+    wallet_address = db.Column(db.String(42))
+    encrypted_privkey = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     jobs_claimed = db.relationship('Job', backref='claimed_agent', lazy=True)
 

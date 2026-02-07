@@ -280,12 +280,22 @@
         // 3. Create modal
         const modal = createWeb3Modal({ wagmiConfig, projectId, chains });
 
-        document.getElementById('connect-wallet').onclick = () => {
-            modal.open();
+        document.getElementById('connect-wallet').onclick = async () => {
+            await modal.open();
+            // Automatically redirect after modal closes if connected
+            // AppKit doesn't have a simple 'onConnect' in this bundle easily accesible
+            // So we poll for a few seconds or rely on user action.
+            // Better: use the wagmi state if we can.
         };
 
-        // Watch for account changes
-        // (Simplified for this MVP, AppKit handles state internally)
+        // Watch for account changes - AppKit handles this via window events usually
+        // but for this simple version, let's just use a simple interval or rely on the modal close
+        setInterval(() => {
+            if (document.querySelector('appkit-account-button') || (typeof window.ethereum !== 'undefined' && window.ethereum.selectedAddress)) {
+                // If we detect an address, wait a bit and redirect
+                setTimeout(() => { window.location.href = '/dashboard'; }, 1000);
+            }
+        }, 2000);
 
         window.copyToClipboard = function(el) {
             const text = el.innerText.trim();

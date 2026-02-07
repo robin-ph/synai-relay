@@ -5,6 +5,8 @@ import os
 import uuid
 import datetime
 from decimal import Decimal
+from wallet_manager import wallet_manager
+from sqlalchemy import text, inspect
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -18,7 +20,23 @@ with app.app_context():
     try:
         print(f"[Relay] Testing Database Connection...")
         db.create_all()
-        print("[Relay] Database check passed.")
+        # Migration Helper: Ensure wallet columns exist
+        print("[Relay] Running lightweight migrations...")
+        with db.engine.connect() as conn:
+            inspector = inspect(db.engine)
+            existing_columns = [col['name'] for col in inspector.get_columns('agents')]
+            
+            if 'wallet_address' not in existing_columns:
+                print("[Relay] Adding wallet_address column to agents table...")
+                conn.execute(text("ALTER TABLE agents ADD COLUMN wallet_address VARCHAR(42)"))
+            
+            if 'encrypted_privkey' not in existing_columns:
+                print("[Relay] Adding encrypted_privkey column to agents table...")
+                conn.execute(text("ALTER TABLE agents ADD COLUMN encrypted_privkey TEXT"))
+            
+            conn.commit()
+            
+        print("[Relay] Database check and migrations passed.")
     except Exception as e:
         print(f"[FATAL ERROR] Database initialization failed: {e}")
 
@@ -41,13 +59,15 @@ def install_script():
 @app.route('/auth/twitter')
 def auth_twitter():
     # In a full app, this would redirect to Twitter OAuth
-    # For now, we provide a placeholder informaton page
+    # For now, we provide a smooth demo entry
     html = """
-    <body style="background:#000; color:#fff; font-family:sans-serif; display:flex; justify-content:center; align-items:center; height:100vh; text-align:center;">
-        <div>
-            <h1 style="color:#bc13fe;">TWITTER AUTH PENDING</h1>
-            <p style="color:#888;">To enable real Twitter Login, you need to configure TWITTER_CLIENT_ID and TWITTER_CLIENT_SECRET in DigitalOcean environment variables.</p>
-            <a href="/" style="color:#00f3ff; text-decoration:none; border:1px solid #00f3ff; padding:10px 20px; border-radius:8px;">Return to Terminal</a>
+    <body style="background:#020202; color:#fff; font-family:sans-serif; display:flex; justify-content:center; align-items:center; height:100vh; text-align:center; background-image: radial-gradient(circle at 50% 50%, rgba(188, 19, 254, 0.1) 0%, transparent 80%);">
+        <div style="max-width:400px; padding:40px; border:1px solid rgba(255,255,255,0.1); border-radius:24px; background:rgba(255,255,255,0.03); backdrop-filter:blur(20px);">
+            <div style="font-size:40px; margin-bottom:20px;">🐦</div>
+            <h1 style="color:#bc13fe; margin-bottom:10px; font-size:24px;">DEMO AUTH MODE</h1>
+            <p style="color:#888; line-height:1.6; font-size:14px; margin-bottom:30px;">Twitter API keys are not yet configured in production. You are entering as <b>Test_User_01</b>.</p>
+            <a href="/dashboard" style="display:block; background:#bc13fe; color:#fff; text-decoration:none; padding:12px; border-radius:12px; font-weight:bold; transition:0.2s;">Enter Dashboard</a>
+            <p style="margin-top:20px; font-size:10px; color:#555;">PROCESSED BY SYNAI SECURITY LAYER</p>
         </div>
     </body>
     """
@@ -65,6 +85,7 @@ def get_ranking():
             "agent_id": a.agent_id,
             "balance": float(a.balance),
             "owner_id": a.owner.username if a.owner and not a.is_ghost else "[ENCRYPTED]",
+            "wallet_address": a.wallet_address,
             "is_ghost": a.is_ghost
         })
     
@@ -151,8 +172,15 @@ def claim_job(task_id):
     # Auto-register agent if not exists
     agent = Agent.query.filter_by(agent_id=agent_id).first()
     if not agent:
-        print(f"[Relay] New agent detected: {agent_id}. Registering...")
-        agent = Agent(agent_id=agent_id, name=f"Agent_{agent_id[:6]}", balance=0)
+        print(f"[Relay] New agent detected: {agent_id}. Registering with managed wallet...")
+        addr, enc_key = wallet_manager.create_wallet()
+        agent = Agent(
+            agent_id=agent_id, 
+            name=f"Agent_{agent_id[:6]}", 
+            balance=0,
+            wallet_address=addr,
+            encrypted_privkey=enc_key
+        )
         db.session.add(agent)
         
     job.status = 'claimed'
@@ -338,4 +366,3 @@ def share_job(task_id):
 
 if __name__ == "__main__":
     app.run(port=5005, debug=True)
-

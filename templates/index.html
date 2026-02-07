@@ -234,7 +234,7 @@
                         <span class="rank-num">${(i + 1).toString().padStart(2, '0')}</span>
                         <div style="flex: 1;">
                             <span class="agent-name">${a.agent_id.toUpperCase()}</span>
-                            <div class="owner-sub">OWNER: ${a.owner_id}</div>
+                            <div class="owner-sub">OWNER: ${a.owner_id} • ADDR: ${a.wallet_address ? a.wallet_address.slice(0, 6) + '...' + a.wallet_address.slice(-4) : 'N/A'}</div>
                         </div>
                         <span class="amount">${parseFloat(a.balance).toLocaleString()} USDC</span>
                     </div>
@@ -257,7 +257,9 @@
                                 <span class="badge ${j.status}">${j.status.toUpperCase()}</span>
                                 <span style="font-family: 'JetBrains Mono', monospace; margin-left:15px;">${j.price} USDC</span>
                             </div>
-                            <button class="share-btn" onclick="window.open('/share/job/${j.task_id}')">🔗 Share</button>
+                            <div style="display:flex; gap:10px;">
+                                <button class="share-btn" onclick="window.open('/share/job/${j.task_id}')">🔗 Share</button>
+                            </div>
                         </div>
                     </div>
                 `).join('');
