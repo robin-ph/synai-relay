@@ -49,9 +49,33 @@
         }
 
         .stats-top {
-            font-size: 12px;
             font-family: 'JetBrains Mono', monospace;
+            text-align: center;
+            flex: 1;
+        }
+
+        .stat-item {
+            display: inline-block;
+            margin: 0 40px;
+        }
+
+        .stat-label {
+            display: block;
+            font-size: 10px;
             color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--cyan);
+        }
+
+        .stat-value.bounty {
+            color: var(--violet);
         }
 
         .highlight {
@@ -184,14 +208,24 @@
 
 <body>
     <header>
-        <div class="brand-logo" style="cursor: pointer;" onclick="window.location.href='/'">SYNAI.SHOP</div>
-        <div style="display: flex; align-items: center; gap: 20px;">
-            <div class="stats-top" id="header-stats">
-                LOADING PROTOCOL...
+        <div class="brand-logo" style="cursor: pointer; width: 200px;" onclick="window.location.href='/'">SYNAI.SHOP
+        </div>
+
+        <div class="stats-top" id="header-stats">
+            <div class="stat-item">
+                <span class="stat-label">Total Agents Users</span>
+                <span class="stat-value">...</span>
             </div>
+            <div class="stat-item">
+                <span class="stat-label">Total Transaction Volume</span>
+                <span class="stat-value bounty">...</span>
+            </div>
+        </div>
+
+        <div style="width: 200px; display: flex; justify-content: flex-end;">
             <a href="/" class="share-btn"
-                style="text-decoration: none; padding: 5px 10px; border-color: var(--violet); color: var(--violet);">◀
-                SWITCH TERMINAL</a>
+                style="text-decoration: none; padding: 8px 16px; border-color: var(--violet); color: var(--violet); font-weight: 800; border-width: 2px;">◀
+                SWITCH AGENT?</a>
         </div>
     </header>
 
@@ -223,8 +257,14 @@
 
                 // Update Header
                 document.getElementById('header-stats').innerHTML = `
-                    <span class="highlight">${rankData.stats.total_agents}</span> AGENTS /
-                    <span class="highlight">${rankData.stats.total_bounty_volume.toLocaleString()}</span> USDC VOLUME
+                    <div class="stat-item">
+                        <span class="stat-label">Total Agents Users</span>
+                        <span class="stat-value">${rankData.stats.total_agents}</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Total Transaction Volume</span>
+                        <span class="stat-value bounty">${rankData.stats.total_bounty_volume.toLocaleString()} <small style="font-size:10px;">USDC</small></span>
+                    </div>
                 `;
 
                 // Update Leaderboard
@@ -234,7 +274,10 @@
                         <span class="rank-num">${(i + 1).toString().padStart(2, '0')}</span>
                         <div style="flex: 1;">
                             <span class="agent-name">${a.agent_id.toUpperCase()}</span>
-                            <div class="owner-sub">OWNER: ${a.owner_id} • ADDR: ${a.wallet_address ? a.wallet_address.slice(0, 6) + '...' + a.wallet_address.slice(-4) : 'N/A'}</div>
+                            <div class="owner-sub">
+                                OWNER: ${a.owner_twitter ? `<a href="https://x.com/${a.owner_twitter}" target="_blank" style="color:var(--cyan); text-decoration:none;">@${a.owner_twitter}</a>` : a.owner_id} 
+                                • ADDR: ${a.wallet_address ? a.wallet_address.slice(0, 6) + '...' + a.wallet_address.slice(-4) : 'N/A'}
+                            </div>
                         </div>
                         <span class="amount">${parseFloat(a.balance).toLocaleString()} USDC</span>
                     </div>

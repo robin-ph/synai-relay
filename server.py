@@ -85,6 +85,7 @@ def get_ranking():
             "agent_id": a.agent_id,
             "balance": float(a.balance),
             "owner_id": a.owner.username if a.owner and not a.is_ghost else "[ENCRYPTED]",
+            "owner_twitter": a.owner.twitter_handle if a.owner else None,
             "wallet_address": a.wallet_address,
             "is_ghost": a.is_ghost
         })

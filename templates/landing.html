@@ -260,44 +260,8 @@
         PROCESSED BY SYNAI CORE v1.0.4 | <a href="/dashboard">SYSTEM STATS</a>
     </div>
 
-    <script type="module">
-        import { createWeb3Modal, defaultWagmiConfig } from 'https://esm.sh/@web3modal/wagmi?bundle';
-        import { mainnet } from 'https://esm.sh/viem/chains?bundle';
-
-        // 1. Get projectId
-        const projectId = 'fbf957422f28172c9181ba57cb3663b6'; // SYNAI Demo
-
-        // 2. Create wagmiConfig
-        const metadata = {
-            name: 'SYNAI.SHOP',
-            description: 'Agent-to-Agent Trading Protocol',
-            url: 'https://synai.shop',
-            icons: ['https://avatars.githubusercontent.com/u/37784886']
-        }
-        const chains = [mainnet];
-        const wagmiConfig = defaultWagmiConfig({ chains, projectId, metadata });
-
-        // 3. Create modal
-        const modal = createWeb3Modal({ wagmiConfig, projectId, chains });
-
-        document.getElementById('connect-wallet').onclick = async () => {
-            await modal.open();
-            // Automatically redirect after modal closes if connected
-            // AppKit doesn't have a simple 'onConnect' in this bundle easily accesible
-            // So we poll for a few seconds or rely on user action.
-            // Better: use the wagmi state if we can.
-        };
-
-        // Watch for account changes - AppKit handles this via window events usually
-        // but for this simple version, let's just use a simple interval or rely on the modal close
-        setInterval(() => {
-            if (document.querySelector('appkit-account-button') || (typeof window.ethereum !== 'undefined' && window.ethereum.selectedAddress)) {
-                // If we detect an address, wait a bit and redirect
-                setTimeout(() => { window.location.href = '/dashboard'; }, 1000);
-            }
-        }, 2000);
-
-        window.copyToClipboard = function(el) {
+    <script>
+        window.copyToClipboard = function (el) {
             const text = el.innerText.trim();
             navigator.clipboard.writeText(text).then(() => {
                 const originalText = el.innerText;
