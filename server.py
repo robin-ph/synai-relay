@@ -1665,9 +1665,9 @@ def fund_job(task_id):
     # G22: Report overpayment in response
     if overpayment:
         resp_data["warnings"] = [
-            f"Overpayment of {overpayment} USDC detected. "
+            f"Overpayment of {overpayment} {Config.XLAYER_TOKEN_SYMBOL} detected. "
             f"The full deposited amount will be refunded if the job is cancelled or expires. "
-            f"Only the job price ({float(job.price)} USDC) will be used for settlement."
+            f"Only the job price ({float(job.price)} {Config.XLAYER_TOKEN_SYMBOL}) will be used for settlement."
         ]
     result = jsonify(resp_data), 200
     save_idempotency(result)
