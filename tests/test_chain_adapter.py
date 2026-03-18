@@ -215,14 +215,10 @@ class TestOnchainOSClient:
         assert "OK-ACCESS-TIMESTAMP" in headers
 
 
-from services.okx_facilitator import OKXFacilitatorClient, _network_to_chain_index
+from services.okx_facilitator import OKXFacilitatorClient
 
 
 class TestOKXFacilitator:
-    def test_network_to_chain_index(self):
-        assert _network_to_chain_index("eip155:196") == "196"
-        assert _network_to_chain_index("eip155:8453") == "8453"
-
     def test_verify_translates_response(self):
         """Mock OnchainOS client and verify response translation."""
         mock_client = MagicMock()
