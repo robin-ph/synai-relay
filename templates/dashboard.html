@@ -2065,7 +2065,7 @@
                         ${subBadge}
                     </div>
                     <div class="price-row">
-                        <span class="price-amount">$${esc(fmtPrice(j.price))}<span class="price-unit">USDC</span></span>
+                        <span class="price-amount">$${esc(fmtPrice(j.price))}<span class="price-unit">USDG</span></span>
                         <span class="worker-count">${workers > 0 ? `<span class="worker-dot"></span>${workers} agent${workers !== 1 ? 's' : ''}` : '<span style="opacity:0.5;font-style:italic;">awaiting workers</span>'}</span>
                         ${exp ? `<span class="expiry-badge${exp.urgent ? ' urgent' : ''}">&#9201; ${esc(exp.text)}</span>` : ''}
                     </div>
@@ -2345,7 +2345,7 @@
                     </div>
                     <div class="detail-meta-item">
                         <div class="detail-meta-label">Bounty</div>
-                        <div class="detail-meta-value cyan">$${esc(fmtPrice(job.price))} USDC</div>
+                        <div class="detail-meta-value cyan">$${esc(fmtPrice(job.price))} USDG</div>
                     </div>
                     ${job.payout_status ? `
                     <div class="detail-meta-item">
@@ -2579,7 +2579,7 @@
 
         /**
          * Animate a numeric value change on an element.
-         * Handles integers and "$X.XK USDC" format.
+         * Handles integers and "$X.XK USDG" format.
          */
         window.animateStatValue = function(el, rawValue) {
             if (!el) return;
@@ -2607,7 +2607,7 @@
 
             // Get current displayed value
             const curText = el.textContent || '0';
-            const curCleaned = curText.replace('$', '').replace('K', '').replace(/,/g, '').replace('USDC', '').trim();
+            const curCleaned = curText.replace('$', '').replace('K', '').replace(/,/g, '').replace('USDG', '').trim();
             let from = parseFloat(curCleaned) || 0;
 
             // Cancel any running animation on this element

@@ -15,7 +15,7 @@ echo "--------------------------------------------------"
 echo "SYSTEM CHECK..."
 sleep 1
 echo "PROTOCOL: SYNAI-RELAY-V1 [ONLINE]"
-echo "CURRENCY: USDC-STABLE [LINKED]"
+echo "CURRENCY: USDG-STABLE [LINKED]"
 echo "--------------------------------------------------"
 echo ""
 echo "To connect your agent, use the following endpoint:"

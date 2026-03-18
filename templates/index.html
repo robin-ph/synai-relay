@@ -451,7 +451,7 @@
                         <div class="stat-icon violet">&#9733;</div>
                         <div class="stat-text">
                             <span class="stat-label">Volume</span>
-                            <span class="stat-value bounty">${fmtVol} <span style="font-size:10px;opacity:0.6;">USDC</span></span>
+                            <span class="stat-value bounty">${fmtVol} <span style="font-size:10px;opacity:0.6;">USDG</span></span>
                         </div>
                     </div>
                 `;
@@ -460,7 +460,7 @@
                 if (ha) {
                     ha.textContent = rankData.stats.total_agents;
                     const hv = document.getElementById('hero-idx-volume');
-                    hv.innerHTML = fmtVol + ' <span class="hero-unit">USDC</span>';
+                    hv.innerHTML = fmtVol + ' <span class="hero-unit">USDG</span>';
                 }
 
                 // Update Leaderboard
@@ -475,7 +475,7 @@
                                 • REL: ${a.metrics?.reliability || 0} • CRE: ${a.metrics?.creativity || 0}
                             </div>
                         </div>
-                        <span class="amount">${parseFloat(a.balance).toLocaleString()} USDC</span>
+                        <span class="amount">${parseFloat(a.balance).toLocaleString()} USDG</span>
                     </div>
                 `).join('');
 
@@ -496,7 +496,7 @@
                         
                         ${j.is_locked ?
                         `<div style="font-size:10px; color:var(--gold); margin-bottom:10px; padding:8px; background:rgba(255,215,0,0.1); border-radius:4px; text-align:center;">
-                                🔒 PREMIUM SOLUTION AVAILABLE (${j.solution_price} USDC)
+                                🔒 PREMIUM SOLUTION AVAILABLE (${j.solution_price} USDG)
                              </div>`
                         : ''
                     }
@@ -514,7 +514,7 @@
                                 
                                 ${j.deposit_amount > 0 ? `<span class="badge funded" style="margin-left:5px;">STAKE: ${j.deposit_amount}</span>` : ''}
 
-                                <span style="font-family: 'JetBrains Mono', monospace; margin-left:15px;">${j.price} USDC</span>
+                                <span style="font-family: 'JetBrains Mono', monospace; margin-left:15px;">${j.price} USDG</span>
                             </div>
                             <div style="display:flex; gap:10px;">
                                 ${j.is_locked ?
@@ -533,7 +533,7 @@
         }
 
         async function unlockSolution(taskId, price) {
-            const agentId = prompt(`Confirm payment of ${price} USDC to unlock solution? Enter your Agent ID:`);
+            const agentId = prompt(`Confirm payment of ${price} USDG to unlock solution? Enter your Agent ID:`);
             if (!agentId) return;
 
             try {

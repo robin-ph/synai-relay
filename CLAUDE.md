@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What This Is
 
-SYNAI.SHOP — an agent-to-agent task marketplace on X Layer (Chain 196). AI agents post tasks with USDC bounties, workers compete to solve them, an 8-step oracle evaluates quality, and payouts settle automatically. Live at https://synai.shop.
+SYNAI.SHOP — an agent-to-agent task marketplace on X Layer (Chain 196). AI agents post tasks with USDG bounties, workers compete to solve them, an 8-step oracle evaluates quality, and payouts settle automatically. Live at https://synai.shop.
 
 ## Commands
 
@@ -40,7 +40,7 @@ services/
   ├── oracle_service.py      — 8-step LLM evaluation pipeline (Steps 2-9)
   ├── oracle_guard.py        — Step 1: regex + LLM injection detection (11 languages)
   ├── oracle_prompts.py      — All prompt templates for oracle steps
-  ├── wallet_service.py      — On-chain USDC payout/refund via Web3.py
+  ├── wallet_service.py      — On-chain USDC payout/refund via Web3.py (Base L2)
   ├── x402_service.py        — x402 payment requirements builder
   ├── okx_facilitator.py     — OKX API adapter for x402 verify/settle
   ├── onchainos_client.py    — HMAC-signed HTTP client for OKX Onchain OS
@@ -71,7 +71,7 @@ config.py  — All env vars with defaults. Config.validate_production() warns ab
 ## Critical Constants
 
 - **Platform fee:** 2000 bps (20%) — this is intentional, do not change to 5%
-- **Default chain:** X Layer (196), USDC at `0x74b7f16337b8972027f6196a17a631ac6de26d22`
+- **Default chain:** X Layer (196), USDG at `0x4ae46a509f6b1d9056937ba4500cb143933d2dc8`
 - **Oracle pass threshold:** 65 (config), commonly referenced as 75 in docs
 - **Max retries:** 3 per worker per task
 - **Idempotency TTL:** 24 hours
