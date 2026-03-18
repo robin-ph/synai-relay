@@ -305,7 +305,7 @@ def _validate_job_fields(data: dict):
     except (InvalidOperation, ValueError, TypeError):
         return None, (jsonify({"error": "Invalid price value"}), 400)
     if price > Decimal('1000000'):
-        return None, (jsonify({"error": "price must be <= 1,000,000 USDC"}), 400)
+        return None, (jsonify({"error": f"price must be <= 1,000,000 {Config.XLAYER_TOKEN_SYMBOL}"}), 400)
 
     rubric = data.get('rubric')
     if rubric and len(rubric) > 10000:
@@ -1149,7 +1149,7 @@ def deposit_info():
                 "gas_limit": gas_info["gas_limit"],
                 "gas_price_gwei": gas_info["gas_price_gwei"],
                 "estimated_cost_eth": gas_info["estimated_cost_eth"],
-                "note": f"Real-time estimate for a USDC transfer on {chain_name}. "
+                "note": f"Real-time estimate for a {Config.XLAYER_TOKEN_SYMBOL if chain_id == 196 else 'USDC'} transfer on {chain_name}. "
                         "Fetch latest before sending your deposit transaction.",
             }
 
@@ -1338,7 +1338,7 @@ def create_job_endpoint():
         payment_required = PaymentRequired(accepts=requirements)
         resp = jsonify({
             "error": "Payment required",
-            "description": f"Task escrow: {price} USDC",
+            "description": f"Task escrow: {price} {Config.XLAYER_TOKEN_SYMBOL}",
         })
         resp.status_code = 402
         resp.headers['PAYMENT-REQUIRED'] = encode_payment_required_header(
@@ -1394,7 +1394,7 @@ def create_job_endpoint():
     g.current_agent_id = buyer_agent.agent_id
 
     # Settlement succeeded — create job as funded
-    # CRITICAL: if _create_job() fails after this point, USDC is already on-chain.
+    # CRITICAL: if _create_job() fails after this point, funds are already on-chain.
     # Log enough info for manual reconciliation.
     chain_id = parse_chain_id(settle_result.network)
     sol_price = price * Decimal(Config.SOLUTION_VIEW_FEE_PERCENT) / Decimal(100)

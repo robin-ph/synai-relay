@@ -29,7 +29,7 @@ class XLayerAdapter(ChainAdapter):
 
     def __init__(self, onchainos_client, ops_private_key: str = '',
                  rpc_url: str = 'https://rpc.xlayer.tech',
-                 usdc_addr: str = '0x74b7f16337b8972027f6196a17a631ac6de26d22'):
+                 usdc_addr: str = '0x4ae46a509f6b1d9056937ba4500cb143933d2dc8'):
         self._client = onchainos_client
         self._usdc_addr = Web3.to_checksum_address(usdc_addr) if usdc_addr else ''
         self._rpc_url = rpc_url
@@ -82,7 +82,7 @@ class XLayerAdapter(ChainAdapter):
     # -- Core operations --
 
     def verify_deposit(self, tx_hash: str, expected_amount: Decimal) -> DepositResult:
-        """Verify a USDC deposit on X Layer via OnchainOS transaction query."""
+        """Verify a token deposit on X Layer via OnchainOS transaction query."""
         if not self._account:
             return DepositResult(valid=False, error="No ops wallet configured — cannot verify deposits")
 
@@ -115,7 +115,7 @@ class XLayerAdapter(ChainAdapter):
                 error=f"tx status: {tx_data.get('txStatus')}"
             )
 
-        # Find USDC transfer to ops wallet
+        # Find token transfer to ops wallet
         logger.debug("verify_deposit tx_data keys: %s", list(tx_data.keys()))
         ops = self._account.address.lower()
         transfers = tx_data.get('tokenTransferDetails', [])
@@ -139,10 +139,10 @@ class XLayerAdapter(ChainAdapter):
                         error=f"Insufficient: got {amount}, expected {expected_amount}"
                     )
 
-        return DepositResult(valid=False, error="No USDC transfer to ops wallet found")
+        return DepositResult(valid=False, error="No token transfer to ops wallet found")
 
     def payout(self, to_address: str, amount: Decimal, fee_bps: int) -> PayoutResult:
-        """Send worker_share USDC to worker. Fee stays in ops wallet."""
+        """Send worker_share to worker. Fee stays in ops wallet."""
         if not (0 <= fee_bps <= 10_000):
             return PayoutResult(error=f"Invalid fee_bps: {fee_bps}")
 
@@ -170,13 +170,13 @@ class XLayerAdapter(ChainAdapter):
     # -- Private helpers --
 
     def _send_usdc(self, to_address: str, amount: Decimal) -> str:
-        """Build, sign, broadcast a USDC transfer. Returns tx hash.
+        """Build, sign, broadcast a token transfer. Returns tx hash.
 
         The nonce lock covers the entire build→sign→broadcast sequence to
         prevent concurrent txs from getting the same nonce.
         """
         if not self._usdc or not self._account:
-            raise RuntimeError("XLayerAdapter not configured for sending (missing key or USDC contract)")
+            raise RuntimeError("XLayerAdapter not configured for sending (missing key or token contract)")
 
         amount_atomic = int(amount * 10 ** USDC_DECIMALS)
         to_addr = Web3.to_checksum_address(to_address)

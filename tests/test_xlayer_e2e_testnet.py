@@ -5,7 +5,7 @@ Skipped by default. Run with:
 
 Prerequisites:
     ONCHAINOS_API_KEY, ONCHAINOS_SECRET_KEY, ONCHAINOS_PASSPHRASE set
-    OPERATIONS_WALLET_KEY set (testnet wallet with OKB for gas + testnet USDC)
+    OPERATIONS_WALLET_KEY set (testnet wallet with OKB for gas + testnet USDG)
     XLAYER_RPC_URL=https://testrpc.xlayer.tech
 """
 import os
@@ -19,7 +19,7 @@ pytestmark = pytest.mark.skipif(
 
 TESTNET_USDC = os.environ.get(
     'XLAYER_TESTNET_USDC',
-    '0x74b7f16337b8972027f6196a17a631ac6de26d22'
+    '0x4ae46a509f6b1d9056937ba4500cb143933d2dc8'
 )
 TESTNET_RPC = os.environ.get('XLAYER_RPC_URL', 'https://testrpc.xlayer.tech')
 
@@ -66,7 +66,7 @@ class TestXLayerTestnet:
         ops = adapter.ops_address()
         result = adapter.payout(ops, Decimal('0.01'), 0)
         if result.error:
-            pytest.skip(f"Payout failed (may need OKB/USDC): {result.error}")
+            pytest.skip(f"Payout failed (may need OKB/USDG): {result.error}")
         assert result.payout_tx
         _payout_tx_hash = result.payout_tx
 

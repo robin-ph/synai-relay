@@ -4,7 +4,7 @@ from decimal import Decimal
 
 logger = logging.getLogger('relay.x402')
 
-# USDC has 6 decimals on all supported chains (Base, X Layer)
+# Stablecoins (USDC on Base, USDG on X Layer) use 6 decimals
 USDC_DECIMALS = 6
 
 
@@ -44,7 +44,9 @@ def build_requirements(amount_usdc: Decimal, pay_to: str,
                 "version": cfg["default_asset"]["version"],
             }
         else:
-            extra = {"name": "USD Coin", "version": "2"}
+            from config import Config
+            extra = {"name": Config.XLAYER_TOKEN_EIP712_NAME,
+                     "version": Config.XLAYER_TOKEN_EIP712_VERSION}
         requirements.append(PaymentRequirements(
             scheme="exact",
             network=network,

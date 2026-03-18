@@ -12,11 +12,11 @@ Prerequisites:
     TEST_BUYER_WALLET_KEY set (buyer wallet private key)
     OPERATIONS_WALLET_KEY set (ops wallet)
     ONCHAINOS_API_KEY, ONCHAINOS_SECRET_KEY, ONCHAINOS_PASSPHRASE set
-    Buyer wallet funded with USDC on X Layer
+    Buyer wallet funded with USDG on X Layer
 
 Wallet roles:
     Buyer   0xf808...  — signs x402 payment (EIP-3009 transferWithAuthorization)
-    Ops     0xB408...  — receives USDC via x402 settlement
+    Ops     0xB408...  — receives USDG via x402 settlement
 """
 import os
 import pytest
@@ -240,7 +240,7 @@ class TestX402XLayer:
         print(f"  Chain: {settlement['chain_id']}")
         print(f"  Deposit tx: {settlement['tx_hash']}")
         print(f"  Depositor: {settlement['depositor']}")
-        print(f"  Amount: {settlement['amount']} USDC")
+        print(f"  Amount: {settlement['amount']} USDG")
 
         assert settlement['chain_id'] == 196
         assert settlement['tx_hash']

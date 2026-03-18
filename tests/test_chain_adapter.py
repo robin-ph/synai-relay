@@ -294,8 +294,8 @@ class TestXLayerAdapter:
 
     def test_usdc_address(self):
         mock_client = MagicMock()
-        adapter = XLayerAdapter(mock_client, usdc_addr='0x74b7f16337b8972027f6196a17a631ac6de26d22')
-        assert adapter.usdc_address() == '0x74b7F16337b8972027F6196A17a631aC6dE26d22'
+        adapter = XLayerAdapter(mock_client, usdc_addr='0x4ae46a509f6b1d9056937ba4500cb143933d2dc8')
+        assert adapter.usdc_address() == '0x4ae46a509F6b1D9056937BA4500cb143933D2dc8'
 
     def test_ops_address_without_key(self):
         mock_client = MagicMock()

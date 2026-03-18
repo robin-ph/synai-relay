@@ -4,11 +4,11 @@ Skipped by default. Run with:
     RUN_E2E_XLAYER=1 pytest tests/test_xlayer_lifecycle_e2e.py -v -s
 
 Flow 1 — Settlement (skip oracle, direct payout):
-    Buyer deposits USDC on-chain → funded job → worker claims → submits →
+    Buyer deposits USDG on-chain → funded job → worker claims → submits →
     skip oracle → resolve → adapter.payout() → verify worker balance
 
 Flow 2 — Expiry refund:
-    Buyer deposits USDC on-chain → funded job with past expiry →
+    Buyer deposits USDG on-chain → funded job with past expiry →
     _auto_refund() → verify buyer balance
 
 Uses real XLayerAdapter (RPC fallback, no OnchainOS needed).
@@ -33,7 +33,7 @@ pytestmark = pytest.mark.skipif(
 
 # --- On-chain constants ---
 XLAYER_RPC = os.environ.get('XLAYER_RPC_URL', 'https://rpc.xlayer.tech')
-USDC_CONTRACT = '0x74b7f16337b8972027f6196a17a631ac6de26d22'
+USDC_CONTRACT = '0x4ae46a509f6b1d9056937ba4500cb143933d2dc8'
 CHAIN_ID = 196
 FEE_BPS = 2000
 
@@ -77,7 +77,7 @@ def _usdc_balance(w3, addr: str) -> Decimal:
 
 
 def _send_usdc_onchain(w3, from_key: str, to: str, amount: Decimal) -> str:
-    """Send USDC via direct ERC-20 transfer on X Layer. Returns tx hash.
+    """Send USDG via direct ERC-20 transfer on X Layer. Returns tx hash.
     Uses 'pending' nonce to handle back-to-back sends without waiting."""
     usdc = _usdc_contract(w3)
     account = Account.from_key(from_key)
@@ -95,7 +95,7 @@ def _send_usdc_onchain(w3, from_key: str, to: str, amount: Decimal) -> str:
     signed = account.sign_transaction(tx)
     tx_hash = w3.eth.send_raw_transaction(signed.raw_transaction)
     receipt = w3.eth.wait_for_transaction_receipt(tx_hash, timeout=60)
-    assert receipt.status == 1, f"USDC transfer failed on-chain: {tx_hash.hex()}"
+    assert receipt.status == 1, f"USDG transfer failed on-chain: {tx_hash.hex()}"
     return '0x' + tx_hash.hex()
 
 
@@ -188,7 +188,7 @@ def _auth(api_key):
 # =============================================================================
 
 class TestSettlementFlow:
-    """Full settlement flow with real on-chain USDC payout."""
+    """Full settlement flow with real on-chain USDG payout."""
 
     TASK_PRICE = Decimal('0.10')
 
@@ -208,12 +208,12 @@ class TestSettlementFlow:
         print(f"  Worker: {worker_id}")
 
     def test_02_deposit_and_create_funded_job(self, setup):
-        """Buyer deposits USDC on-chain, then create funded job via API + DB update."""
+        """Buyer deposits USDG on-chain, then create funded job via API + DB update."""
         client = setup['client']
         w3 = _w3()
 
-        # Step 1: Buyer sends USDC to operator on-chain
-        print(f"\n  Depositing {self.TASK_PRICE} USDC on X Layer...")
+        # Step 1: Buyer sends USDG to operator on-chain
+        print(f"\n  Depositing {self.TASK_PRICE} USDG on X Layer...")
         deposit_tx = _send_usdc_onchain(w3, BUYER_KEY, OPS_ADDR, self.TASK_PRICE)
         print(f"  Deposit tx: {deposit_tx}")
 
@@ -287,7 +287,7 @@ class TestSettlementFlow:
 
         # Record worker balance before payout
         worker_before = _usdc_balance(w3, WORKER_ADDR)
-        print(f"\n  Worker USDC before: {worker_before}")
+        print(f"\n  Worker USDG before: {worker_before}")
 
         # Step 1: Resolve job (what oracle would do)
         job = db.session.get(Job, task_id)
@@ -306,7 +306,7 @@ class TestSettlementFlow:
         fee_bps = job.fee_bps if job.fee_bps is not None else Config.PLATFORM_FEE_BPS
         expected_share = (job.price * (Decimal(1) - Decimal(fee_bps) / Decimal(10000)))
 
-        print(f"  Payout: {job.price} USDC at {fee_bps} bps → {expected_share} to worker")
+        print(f"  Payout: {job.price} USDG at {fee_bps} bps → {expected_share} to worker")
 
         job.payout_status = 'pending'
         db.session.flush()
@@ -329,7 +329,7 @@ class TestSettlementFlow:
         worker_after = _wait_balance(w3, WORKER_ADDR, expected_bal)
         actual_received = worker_after - worker_before
 
-        print(f"  Worker USDC after: {worker_after} (+{actual_received})")
+        print(f"  Worker USDG after: {worker_after} (+{actual_received})")
         assert actual_received == expected_share, \
             f"Worker received {actual_received}, expected {expected_share}"
 
@@ -362,17 +362,17 @@ class TestSettlementFlow:
 # =============================================================================
 
 class TestExpiryRefundFlow:
-    """Expiry refund flow with real on-chain USDC refund."""
+    """Expiry refund flow with real on-chain USDG refund."""
 
     TASK_PRICE = Decimal('0.10')
 
     def test_01_deposit_and_create_expired_job(self, setup):
-        """Buyer deposits USDC, create job with past expiry."""
+        """Buyer deposits USDG, create job with past expiry."""
         client = setup['client']
         w3 = _w3()
 
-        # Buyer deposits USDC
-        print(f"\n  Depositing {self.TASK_PRICE} USDC for expiry test...")
+        # Buyer deposits USDG
+        print(f"\n  Depositing {self.TASK_PRICE} USDG for expiry test...")
         deposit_tx = _send_usdc_onchain(w3, BUYER_KEY, OPS_ADDR, self.TASK_PRICE)
         print(f"  Deposit tx: {deposit_tx}")
 
@@ -412,7 +412,7 @@ class TestExpiryRefundFlow:
 
         # Record buyer balance before refund
         buyer_before = _usdc_balance(w3, BUYER_ADDR)
-        print(f"\n  Buyer USDC before: {buyer_before}")
+        print(f"\n  Buyer USDG before: {buyer_before}")
 
         # Mark as expired (what expiry checker does)
         job.status = 'expired'
@@ -437,7 +437,7 @@ class TestExpiryRefundFlow:
         buyer_after = _wait_balance(w3, BUYER_ADDR, expected_bal)
         actual_received = buyer_after - buyer_before
 
-        print(f"  Buyer USDC after: {buyer_after} (+{actual_received})")
+        print(f"  Buyer USDG after: {buyer_after} (+{actual_received})")
         assert actual_received == self.TASK_PRICE, \
             f"Buyer received {actual_received}, expected {self.TASK_PRICE}"
 
@@ -474,9 +474,9 @@ class TestFinalSummary:
         print(f"\n  ╔══════════════════════════════════════╗")
         print(f"  ║   X Layer Lifecycle E2E — Summary    ║")
         print(f"  ╠══════════════════════════════════════╣")
-        print(f"  ║  Operator USDC:  {str(op_bal):>18} ║")
-        print(f"  ║  Buyer USDC:     {str(buyer_bal):>18} ║")
-        print(f"  ║  Worker USDC:    {str(worker_bal):>18} ║")
+        print(f"  ║  Operator USDG:  {str(op_bal):>18} ║")
+        print(f"  ║  Buyer USDG:     {str(buyer_bal):>18} ║")
+        print(f"  ║  Worker USDG:    {str(worker_bal):>18} ║")
         print(f"  ╠══════════════════════════════════════╣")
         print(f"  ║  Settlement tx:  {setup.get('payout_tx', 'N/A')[:18]}║")
         print(f"  ║  Refund tx:      {setup.get('refund_tx', 'N/A')[:18]}║")

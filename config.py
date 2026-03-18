@@ -39,7 +39,10 @@ class Config:
 
     # X Layer
     XLAYER_RPC_URL = os.environ.get('XLAYER_RPC_URL', 'https://rpc.xlayer.tech')
-    XLAYER_USDC_CONTRACT = os.environ.get('XLAYER_USDC_CONTRACT', '0x74b7f16337b8972027f6196a17a631ac6de26d22')
+    XLAYER_USDC_CONTRACT = os.environ.get('XLAYER_USDC_CONTRACT', '0x4ae46a509f6b1d9056937ba4500cb143933d2dc8')
+    XLAYER_TOKEN_SYMBOL = os.environ.get('XLAYER_TOKEN_SYMBOL', 'USDG')
+    XLAYER_TOKEN_EIP712_NAME = os.environ.get('XLAYER_TOKEN_EIP712_NAME', 'Global Dollar')
+    XLAYER_TOKEN_EIP712_VERSION = os.environ.get('XLAYER_TOKEN_EIP712_VERSION', '1')
 
     # OnchainOS (OKX)
     ONCHAINOS_API_KEY = os.environ.get('ONCHAINOS_API_KEY', '')

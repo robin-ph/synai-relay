@@ -159,7 +159,7 @@ def print_dashboard_snapshot():
     print(f"\n  {BOLD}Dashboard Snapshot{RESET}")
     print(f"    Agents: {stats.get('total_agents', '?')}  "
           f"Active: {stats.get('total_active_agents', '?')}  "
-          f"Volume: {stats.get('total_volume', '?')} USDC")
+          f"Volume: {stats.get('total_volume', '?')} USDG")
     tbs = stats.get('tasks_by_status', {})
     status_parts = [f"{k}={v}" for k, v in sorted(tbs.items())]
     if status_parts:

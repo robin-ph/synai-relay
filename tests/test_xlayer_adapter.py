@@ -21,7 +21,7 @@ TEST_KEY = '0x' + 'ab' * 32
 from eth_account import Account as _Account
 OPS_ADDRESS = _Account.from_key(TEST_KEY).address
 
-USDC_CONTRACT = '0x74b7F16337b8972027F6196A17a631aC6dE26d22'
+USDC_CONTRACT = '0x4ae46a509F6b1D9056937BA4500cb143933D2dc8'
 WORKER_ADDR = '0x' + '11' * 20   # valid-length hex address for tests
 BUYER_ADDR = '0x' + '22' * 20
 
@@ -148,7 +148,7 @@ class TestVerifyDeposit:
         )
         result = adapter.verify_deposit('0xTX', Decimal('50'))
         assert result.valid is False
-        assert 'No USDC transfer' in result.error
+        assert 'No token transfer' in result.error
 
     def test_wrong_recipient(self):
         adapter, _ = _make_adapter()
@@ -157,7 +157,7 @@ class TestVerifyDeposit:
         )
         result = adapter.verify_deposit('0xTX', Decimal('50'))
         assert result.valid is False
-        assert 'No USDC transfer' in result.error
+        assert 'No token transfer' in result.error
 
     def test_pending_status(self):
         adapter, _ = _make_adapter()
@@ -178,7 +178,7 @@ class TestVerifyDeposit:
         adapter._client.get.return_value = _make_tx_response(transfers=[])
         result = adapter.verify_deposit('0xTX', Decimal('50'))
         assert result.valid is False
-        assert 'No USDC transfer' in result.error
+        assert 'No token transfer' in result.error
 
     def test_api_error(self):
         adapter, _ = _make_adapter()
